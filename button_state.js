@@ -18,30 +18,51 @@ module.exports = function (RED) {
     var generateHTML = function (config) {
         var HTML = "";
 
+        console.log(config);
+
         //Add the CSS
         HTML += String.raw`
         <style>
-            .on {
-                background-color: green !important;
+            .container {
+                padding: 0;
+                margin: 0;
+                float: left;
+                background-color: pink;
+                display: inline-block;
+                max-width: calc(100% / ${Math.ceil(config.options.length / config.height)});
             }
-
-            .off {
-                background-color: red !important;
+            .optionButton {
+                width: 100%;
+                height: 100%;
+                margin: 0 !important;
             }
         </style>
+        <div>
         `;
 
         //Add a button to the HTML
         var addButton = function (value) {
             HTML += String.raw`
-                <md-button class="{{(value == '${value.value}') ? 'on': 'off'}}" ng-click="buttonClicked('${value.value}')">${value.text}</md-button>
+                <md-button class='optionButton' style="background-color: {{(value == '${value.value}') ? '${value.onColor}': '${value.offColor}'}}" ng-click="buttonClicked('${value.value}')">${value.label}</md-button>
             `;
         }
 
+        HTML += "<div class='container'>";
+
         //Add the buttons for the values
-        for (var i = 0; i < config.values.length; i++) {
-            addButton(config.values[i]);
+        var j = 0;
+        for (var i = 0; i < config.options.length; i++) {
+            //If we go outside our height bounds move over to the next column
+            if (j >= parseInt(config.height)) {
+                HTML += "</div><div class='container'>";
+                j = 0;
+            }
+            addButton(config.options[i]);
+            j++;
         }
+
+        HTML += "</div></div>";
+        console.log(HTML);
         return HTML;
     }
 
@@ -52,41 +73,6 @@ module.exports = function (RED) {
             if (ui === undefined) {
                 ui = RED.require("node-red-dashboard")(RED);
             }
-
-            //Stuff to be set in the config
-            config.values = [
-                {
-                    "text": "Test",
-                    "value": "testVal",
-                    "onColor": "green",
-                    "offColor": "red"
-                },
-                {
-                    "text": "Test1",
-                    "value": "testVal1",
-                    "onColor": "green",
-                    "offColor": "red"
-                },
-                {
-                    "text": "Test2",
-                    "value": "testVal2",
-                    "onColor": "green",
-                    "offColor": "red"
-                },
-                {
-                    "text": "Test3",
-                    "value": "testVal3",
-                    "onColor": "green",
-                    "offColor": "red"
-                },
-                {
-                    "text": "Test4",
-                    "value": "testVal4",
-                    "onColor": "green",
-                    "offColor": "red"
-                }
-            ];
-
 
             RED.nodes.createNode(this, config);
             var done = ui.addWidget({
@@ -123,6 +109,7 @@ module.exports = function (RED) {
 
                     //When a message comes on the input and is sent from before emit
                     $scope.$watch("msg", function (msg) {
+                        if (!msg) { return; }
                         $scope.value = msg.payload;
                     });
                 },

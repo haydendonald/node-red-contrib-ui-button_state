@@ -49,11 +49,9 @@
         category: 'dashboard',
         color: 'rgb( 63, 173, 181)',
         defaults: {
-            // belonging dashboard group
             group: { type: 'ui_group', required: true },
             name: { value: '' },
             order: { value: 0 },
-            // width and height of widget
             width: {
                 value: 0,
                 validate: function (v) {
@@ -67,6 +65,19 @@
                 }
             },
             height: { value: 0 },
+            options: {
+                value: [],
+                validate: function (values) {
+                    if(values === undefined){return false;}
+                    for(var i in values) {
+                        if(values[i].label === undefined){return false;}
+                        if(values[i].value === undefined || values[i].value == ""){return false;}
+                        if(values[i].offColor === undefined || values[i].offColor == ""){return false;}
+                        if(values[i].onColor === undefined || values[i].onColor == ""){return false;}
+                    }
+                    return true;
+                }
+            }
         },
         inputs: 1,
         outputs: 1,
@@ -74,27 +85,26 @@
         paletteLabel: "Button State",
         label: function () { return this.name || "Button State"; },
         oneditprepare: function () {
-            // use elementSizer to input common widget parameters
+            //Validate and add an item
+            function validate() {
+                var self = this
+                this.options = [];
+                var optionsList = $("#node-input-options-container").editableList('items');
+                optionsList.each(function (i) {
+                    var option = $(this);
+                    var curr = {};
+                    curr["label"] = option.find(".node-input-option-label").val();
+                    curr["value"] = option.find(".node-input-option-value").typedInput('value');
+                    curr["onColor"] = option.find(".node-input-option-onColor").val();
+                    curr["offColor"] = option.find(".node-input-option-offColor").val();
+                    self.options.push(curr);
+                });
+            }
             $("#node-input-size").elementSizer({
                 width: "#node-input-width",
                 height: "#node-input-height",
                 group: "#node-input-group"
             });
-
-            // $('#node-input-rounded').change(function () {
-            //     if (this.checked == true) {
-            //         $("#appearance-square").css('opacity', "0.4");
-            //         $("#appearance-round").css('opacity', "1");
-            //     } else {
-            //         $("#appearance-square").css('opacity', "1");
-            //         $("#appearance-round").css('opacity', "0.4");
-            //     }
-            // })
-            // $("#node-input-size").elementSizer({
-            //     width: "#node-input-width",
-            //     height: "#node-input-height",
-            //     group: "#node-input-group"
-            // });
 
             var optionsList = $("#node-input-options-container").css('min-height', '200px').editableList({
                 header: $("<div>").css('padding-left', '32px').append($.parseHTML(
@@ -113,71 +123,49 @@
                     valueField.typedInput("type", option.valueType || "str");
                     valueField.typedInput("value", option.value || "option_" + i);
                     valueField.on('change', function (type, value) {
-                        validate()
+                        validate();
                     });
 
 
                     var onColorField = $("#node-input-useThemeColors").prop("checked") ? "none" : "inline-block";
-                    var onColorField = $('<input/>', { class: "node-input-option-color", type: "color" }).css({ "width": "10%", "margin-left": "5px", "display": onColorField }).appendTo(row);
+                    var onColorField = $('<input/>', { class: "node-input-option-onColor", type: "color" }).css({ "width": "10%", "margin-left": "5px", "display": onColorField }).appendTo(row);
                     onColorField.val(option.color || "#99ff99");
 
                     var offColorField = $("#node-input-useThemeColors").prop("checked") ? "none" : "inline-block";
-                    var offColorField = $('<input/>', { class: "node-input-option-color", type: "color" }).css({ "width": "10%", "margin-left": "5px", "display": offColorField }).appendTo(row);
+                    var offColorField = $('<input/>', { class: "node-input-option-offColor", type: "color" }).css({ "width": "10%", "margin-left": "5px", "display": offColorField }).appendTo(row);
                     offColorField.val(option.color || "#ff3333");
+                    validate();
 
 
-
-                    validate()
                 },
                 removeItem: function (data) {
                     validate()
                 },
                 removable: true,
-                sortable: true
+                sortable: true,
+
             });
+
+            //Add existing options
             if (this.options) {
                 this.options.forEach(function (option, index) {
-                    optionsList.editableList('addItem', { label: option.label, value: option.value, valueType: option.valueType, color: option.color });
+                    optionsList.editableList('addItem', { label: option.label, value: option.value, onColor: option.onColor, offColor: option.offColor });
                 });
             }
-
-            // $("#node-input-useThemeColors").on("change", function () {
-            //     var colorFields = $(".node-input-option-color");
-            //     if ($(this)[0].checked) {
-            //         colorFields.hide();
-            //     }
-            //     else {
-            //         colorFields.show();
-            //     }
-            // });
-
-            // $("#node-input-doubleClickZoomEnabled").change();
-
-            // $("#node-input-stateField").val(this.stateField);
-            // $('#node-input-stateField').typedInput({
-            //     types: ['msg'],
-            //     default: 'msg'
-            // });
-
-            // $("#node-input-enableField").val(this.enableField);
-            // $('#node-input-enableField').typedInput({
-            //     types: ['msg'],
-            //     default: 'msg'
-            // });
-
-            // $("#node-input-passthroughField").val(this.passthroughField);
-            // $('#node-input-passthroughField').typedInput({
-            //     types: ['msg'],
-            //     default: 'msg'
-            // });
-
-            // $("#node-input-inputMsgField").val(this.inputMsgField);
-            // $('#node-input-inputMsgField').typedInput({
-            //     types: ['msg'],
-            //     default: 'msg'
-            // });
         },
         oneditsave: function () {
+            var self = this;
+            self.options = [];
+            var optionsList = $("#node-input-options-container").editableList('items');
+            optionsList.each(function (i) {
+                var option = $(this);
+                var curr = {};
+                curr["label"] = option.find(".node-input-option-label").val();
+                curr["value"] = option.find(".node-input-option-value").typedInput('value');
+                curr["onColor"] = option.find(".node-input-option-onColor").val();
+                curr["offColor"] = option.find(".node-input-option-offColor").val();
+                self.options.push(curr);
+            });
         },
         oneditresize: function (size) {
         }

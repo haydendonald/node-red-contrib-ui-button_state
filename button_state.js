@@ -16,6 +16,7 @@
 module.exports = function (RED) {
     //Generate the HTML
     var generateHTML = function (config) {
+        var height = config.height != 0 ? config.height : 20;
         var HTML = "";
 
         //Add the CSS
@@ -24,9 +25,11 @@ module.exports = function (RED) {
             .container {
                 padding: 0;
                 margin: 0;
+                margin-left: 2.5px;
+                margin-right: 2.5px;
                 float: left;
                 display: inline-block;
-                width: calc(100% / ${Math.ceil(config.options.length / config.height)});
+                width: calc(calc(100% / ${Math.ceil(config.options.length / height)}) - 5px);
             }
             .optionButton {
                 width: 100%;
@@ -49,7 +52,7 @@ module.exports = function (RED) {
         var j = 0;
         for (var i = 0; i < config.options.length; i++) {
             //If we go outside our height bounds move over to the next column
-            if (j >= parseInt(config.height)) {
+            if (j >= parseInt(height)) {
                 HTML += "</div><div class='container'>";
                 j = 0;
             }
@@ -58,7 +61,6 @@ module.exports = function (RED) {
         }
 
         HTML += "</div></div>";
-        console.log(HTML);
         return HTML;
     }
 

@@ -15,10 +15,10 @@
  **/
 module.exports = function (RED) {
     //Generate the HTML
-    var generateHTML = function (config) {
+    var generateHTML = function (config, width) {
         var height = config.height != 0 ? config.height : 20;
         var HTML = "<div>";
-        
+
         //Add the CSS
         var containerCSS = String.raw`
             padding: 0;
@@ -27,9 +27,9 @@ module.exports = function (RED) {
             margin-right: 2.5px;
             float: left;
             display: inline-block;
-            width: calc(calc(100% / ${Math.ceil(config.options.length / height)}) - 5px);
+            width: ${(width / Math.ceil(config.options.length / height)) - 5}px;
         `
-
+        //            width: calc(calc(100% / ${Math.ceil(config.options.length / height)}) - 5px);
         var optionButtonCSS = String.raw`
             width: 100%;
             height: 100%;
@@ -71,7 +71,7 @@ module.exports = function (RED) {
             RED.nodes.createNode(this, config);
             var done = ui.addWidget({
                 node: node,
-                format: generateHTML(config),
+                format: generateHTML(config, (ui.getSizes().sx * config.width) - 12),
                 templateScope: "local",
                 group: config.group,
                 emitOnlyNewValues: false,
@@ -94,6 +94,7 @@ module.exports = function (RED) {
 
                 //Setup the angular parameters
                 initController: function ($scope, events) {
+                    //Set our width (supporting old browsers that don't support calc)
                     $scope.value = "";
 
                     //When a button is clicked

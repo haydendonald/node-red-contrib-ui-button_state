@@ -18,7 +18,7 @@ module.exports = function (RED) {
     var generateHTML = function (config) {
         var height = config.height != 0 ? config.height : 20;
         var HTML = "<div>";
-
+        
         //Add the CSS
         var containerCSS = String.raw`
             padding: 0;

@@ -127,13 +127,11 @@
                     });
 
 
-                    var onColorField = $("#node-input-useThemeColors").prop("checked") ? "none" : "inline-block";
                     var onColorField = $('<input/>', { class: "node-input-option-onColor", type: "color" }).css({ "width": "10%", "margin-left": "5px", "display": onColorField }).appendTo(row);
-                    onColorField.val(option.color || "#99ff99");
+                    onColorField.val(option.onColor || "#99ff99");
 
-                    var offColorField = $("#node-input-useThemeColors").prop("checked") ? "none" : "inline-block";
                     var offColorField = $('<input/>', { class: "node-input-option-offColor", type: "color" }).css({ "width": "10%", "margin-left": "5px", "display": offColorField }).appendTo(row);
-                    offColorField.val(option.color || "#ff3333");
+                    offColorField.val(option.offColor || "#ff3333");
                     validate();
 
 

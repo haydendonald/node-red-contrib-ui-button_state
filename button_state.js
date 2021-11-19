@@ -18,8 +18,6 @@ module.exports = function (RED) {
     var generateHTML = function (config) {
         var HTML = "";
 
-        console.log(config);
-
         //Add the CSS
         HTML += String.raw`
         <style>
@@ -27,14 +25,12 @@ module.exports = function (RED) {
                 padding: 0;
                 margin: 0;
                 float: left;
-                background-color: pink;
                 display: inline-block;
-                max-width: calc(100% / ${Math.ceil(config.options.length / config.height)});
+                width: calc(100% / ${Math.ceil(config.options.length / config.height)});
             }
             .optionButton {
                 width: 100%;
                 height: 100%;
-                margin: 0 !important;
             }
         </style>
         <div>
@@ -43,7 +39,7 @@ module.exports = function (RED) {
         //Add a button to the HTML
         var addButton = function (value) {
             HTML += String.raw`
-                <md-button class='optionButton' style="background-color: {{(value == '${value.value}') ? '${value.onColor}': '${value.offColor}'}}" ng-click="buttonClicked('${value.value}')">${value.label}</md-button>
+                <md-button class='optionButton' style="background-color: {{(value == '${value.value}') ? '${value.onColor}': '${value.offColor}'}} !important" ng-click="buttonClicked('${value.value}')">${value.label}</md-button>
             `;
         }
 

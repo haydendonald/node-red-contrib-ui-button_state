@@ -15,10 +15,12 @@
  **/
 module.exports = function (RED) {
     //Generate the HTML
-    var generateHTML = function (config, width) {
-        var height = config.height != 0 ? config.height : 20;
-        var HTML = "<div>";
+    var generateHTML = function (config, width, height) {
+        var numButtonsY = parseInt(config.height != 0 ? config.height : 20);
+        var buttonHeight = (height / numButtonsY) - 10;
 
+        var HTML = "<div>";
+        
         //Add the CSS
         var containerCSS = String.raw`
             padding: 0;
@@ -27,12 +29,18 @@ module.exports = function (RED) {
             margin-right: 2.5px;
             float: left;
             display: inline-block;
-            width: ${(width / Math.ceil(config.options.length / height)) - 5}px;
+            width: ${(width / Math.ceil(config.options.length / numButtonsY)) - 5}px;
+            height: ${height - 5}px;
+            background-color: green;
         `
-        //            width: calc(calc(100% / ${Math.ceil(config.options.length / height)}) - 5px);
         var optionButtonCSS = String.raw`
             width: 100%;
-            height: 100%;
+            min-height: ${buttonHeight}px;
+            max-height: ${buttonHeight}px;
+            padding: 0;
+            margin: 0;
+            margin-top: 2.5px;
+            margin-bottom: 2.5px;
         `;
 
         //Add a button to the HTML
@@ -48,7 +56,7 @@ module.exports = function (RED) {
         var j = 0;
         for (var i = 0; i < config.options.length; i++) {
             //If we go outside our height bounds move over to the next column
-            if (j >= parseInt(height)) {
+            if (j >= numButtonsY) {
                 HTML += String.raw`</div><div style="${containerCSS}">`;
                 j = 0;
             }
@@ -67,11 +75,11 @@ module.exports = function (RED) {
             if (ui === undefined) {
                 ui = RED.require("node-red-dashboard")(RED);
             }
-
+            
             RED.nodes.createNode(this, config);
             var done = ui.addWidget({
                 node: node,
-                format: generateHTML(config, (ui.getSizes().sx * config.width) - 12),
+                format: generateHTML(config, (ui.getSizes().sx * config.width) + 18, ui.getSizes().sy * config.height + 21.25), //The 18 and 21.25 values are the difference in the value and what is actually on the dashboard
                 templateScope: "local",
                 group: config.group,
                 emitOnlyNewValues: false,

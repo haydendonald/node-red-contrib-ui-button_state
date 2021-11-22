@@ -126,6 +126,9 @@ module.exports = function (RED) {
                                 //Show the element with a nice fade once everything has loaded since this will happen after the page is loaded :(
                                 curr.getElementsByTagName("div")[0].style.display = "block";
                                 setTimeout(function () { curr.getElementsByTagName("div")[0].style.opacity = 1; }, 100);
+
+                                //Send a request to get states
+                                $scope.send([undefined, {payload: $scope.value}]);
                             }
                         }
 

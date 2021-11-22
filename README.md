@@ -4,6 +4,9 @@ This is a simple widget for the NodeRed dashboard that displays many buttons tha
 ## Example interface
 ![Example](./img/example.png)
 
+
+
+
 # Sending to input
 Below is an example for setting the state on the widget
 ```
@@ -13,9 +16,17 @@ Below is an example for setting the state on the widget
 ```
 
 # Output from the node
-Below is an example of what will be output by the node when a button is clicked
+Below is an example of what will be output by the node (on the top output) when a button is clicked
 ```
 {
     "payload": "value"
 }
 ```
+
+The node will also "request" an update on the bottom output with the following
+```
+{
+    "payload": "current known value" //This will be "" when first deployed
+}
+```
+It is expected that the node will be told it's value on the input when it requests this

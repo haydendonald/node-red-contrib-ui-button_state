@@ -17,6 +17,7 @@ module.exports = function (RED) {
     //Generate the HTML
     var generateHTML = function (config) {
         var HTML = String.raw`<div style="width: 100%; height: 100%; opacity: 0; display: none; transition: opacity 0.5s;">`;
+
         var optionButtonCSS = String.raw`
             width: 100%;
             padding: 0;
@@ -28,7 +29,16 @@ module.exports = function (RED) {
         //Add a button to the HTML
         var addButton = function (value) {
             HTML += String.raw`
-                <md-button style='${optionButtonCSS} ${config.offClass != "" ? "'class=" + config.offClass : "background-color:" + value.offColor + "'"} ng-click="buttonClicked('${value.value}')" value="${value.value}" oncolor="${value.onColor}" offcolor="${value.offColor}" onclass="${config.onClass || "disabled"}" offclass="${config.offClass || "disabled"}">${value.label}</md-button>
+                <md-button 
+                    style='${optionButtonCSS} ${config.offClass == "" ? "background-color:" + value.offColor : ""}'
+                    ${config.offClass != "" ? "class=" + config.offClass : ""}
+                    ng-click="buttonClicked('${value.value}')"
+                    value="${value.value}" 
+                    oncolor="${value.onColor}" 
+                    offcolor="${value.offColor}" 
+                    onclass="${config.onClass || "disabled"}" 
+                    offclass="${config.offClass || "disabled"}">${value.label}
+                </md-button>
             `;
         }
 
@@ -147,8 +157,6 @@ module.exports = function (RED) {
                                 var offColor = $scope.buttons[$scope.value][j].getAttribute("offColor");
                                 var offClass = $scope.buttons[$scope.value][j].getAttribute("offClass");
                                 var onClass = $scope.buttons[$scope.value][j].getAttribute("onClass");
-
-                                console.log(offClass);
 
                                 if (offClass != "disabled") {
                                     $scope.buttons[$scope.value][j].style.backgroundColor = "";

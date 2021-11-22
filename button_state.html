@@ -36,6 +36,15 @@
     <div class="form-row">       
         <ol id="node-input-options-container"></ol>
     </div>
+    <p>The following will set a class to the buttons (overrides the on/off colors) which can be specified using a template node to inject the classes. To disable set to nothing.</p>
+    <div class="form-row">
+        <label for="node-input-onClass"><i class="fa fa-tint"></i> On Class</label>
+        <input type="text" id="node-input-onClass">
+    </div>
+    <div class="form-row">
+        <label for="node-input-offClass"><i class="fa fa-tint"></i> Off Class</label>
+        <input type="text" id="node-input-offClass">
+    </div>
 </script>
 
 <script type="text/javascript">
@@ -46,6 +55,8 @@
             group: { type: 'ui_group', required: true },
             name: { value: '' },
             order: { value: 0 },
+            onClass: {value: ""},
+            offClass: {value: ""},
             width: {
                 value: 0,
                 validate: function (v) {

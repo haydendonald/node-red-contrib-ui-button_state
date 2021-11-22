@@ -28,7 +28,7 @@ module.exports = function (RED) {
         //Add a button to the HTML
         var addButton = function (value) {
             HTML += String.raw`
-                <md-button style="${optionButtonCSS} background-color: ${value.offColor}" value="${value.value}" oncolor="${value.onColor}" offcolor="${value.offColor}" ng-click="buttonClicked('${value.value}')">${value.label}</md-button>
+                <md-button style='${optionButtonCSS} ${config.offClass != "" ? "'class=" + config.offClass : "background-color:" + value.offColor + "'"} ng-click="buttonClicked('${value.value}')" value="${value.value}" oncolor="${value.onColor}" offcolor="${value.offColor}" onclass="${config.onClass || "disabled"}" offclass="${config.offClass || "disabled"}">${value.label}</md-button>
             `;
         }
 
@@ -128,7 +128,7 @@ module.exports = function (RED) {
                                 setTimeout(function () { curr.getElementsByTagName("div")[0].style.opacity = 1; }, 100);
 
                                 //Send a request to get states
-                                $scope.send([undefined, {payload: $scope.value}]);
+                                $scope.send([undefined, { payload: $scope.value }]);
                             }
                         }
 
@@ -144,13 +144,37 @@ module.exports = function (RED) {
                         //Update our buttons
                         try {
                             for (var j = 0; j < $scope.buttons[$scope.value].length; j++) {
-                                $scope.buttons[$scope.value][j].style.backgroundColor = $scope.buttons[$scope.value][j].getAttribute("offColor");
+                                var offColor = $scope.buttons[$scope.value][j].getAttribute("offColor");
+                                var offClass = $scope.buttons[$scope.value][j].getAttribute("offClass");
+                                var onClass = $scope.buttons[$scope.value][j].getAttribute("onClass");
+
+                                console.log(offClass);
+
+                                if (offClass != "disabled") {
+                                    $scope.buttons[$scope.value][j].style.backgroundColor = "";
+                                    $scope.buttons[$scope.value][j].classList.add(offClass);
+                                    $scope.buttons[$scope.value][j].classList.remove(onClass);
+                                }
+                                else {
+                                    $scope.buttons[$scope.value][j].style.backgroundColor = offColor;
+                                }
                             }
                         }
                         catch (e) { }
                         try {
                             for (var j = 0; j < $scope.buttons[newValue].length; j++) {
-                                $scope.buttons[newValue][j].style.backgroundColor = $scope.buttons[newValue][j].getAttribute("onColor");
+                                var onColor = $scope.buttons[newValue][j].getAttribute("onColor");
+                                var offClass = $scope.buttons[newValue][j].getAttribute("offClass");
+                                var onClass = $scope.buttons[newValue][j].getAttribute("onClass");
+
+                                if (onClass != "disabled") {
+                                    $scope.buttons[newValue][j].style.backgroundColor = "";
+                                    $scope.buttons[newValue][j].classList.add(onClass);
+                                    $scope.buttons[newValue][j].classList.remove(offClass);
+                                }
+                                else {
+                                    $scope.buttons[newValue][j].style.backgroundColor = onColor;
+                                }
                             }
                         }
                         catch (e) { }

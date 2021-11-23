@@ -123,7 +123,7 @@ module.exports = function (RED) {
                                     height: 100%;
                                     display: inline-block;
                                 `;
-                                    currDiv.style = containerCSS;
+                                    currDiv.style.cssText = containerCSS;
                                     for (var k = 0; k < currDiv.getElementsByTagName("button").length; k++) {
                                         var currButton = currDiv.getElementsByTagName("button")[k];
                                         currButton.style.height = String.raw`${buttonHeight}px`;

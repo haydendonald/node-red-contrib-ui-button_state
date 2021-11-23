@@ -1,6 +1,6 @@
 {
     "name": "node-red-contrib-ui-button_state",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "description": "Node-RED UI widget that allows selection of a state with a group of buttons",
     "author": "Hayden Donald",
     "license": "Apache",

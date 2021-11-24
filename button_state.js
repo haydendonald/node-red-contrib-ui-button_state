@@ -16,7 +16,7 @@
 module.exports = function (RED) {
     //Generate the HTML
     var generateHTML = function (config) {
-        var HTML = String.raw`<div style="width: 100%; height: 100%; opacity: 0; display: none; transition: opacity 0.5s;">`;
+        var HTML = String.raw`<div style="width: 100%; height: 100%; display: none;">`;
 
         var optionButtonCSS = String.raw`
             width: 100%;
@@ -107,6 +107,7 @@ module.exports = function (RED) {
                                 curr.style.padding = 0;
                                 curr.style.margin = 0;
 
+                                
                                 var containerWidth = (width / (curr.getElementsByTagName("div").length - 1)) - 5;
                                 var buttonHeight = (height / $scope.height) - 5;
 
@@ -123,6 +124,7 @@ module.exports = function (RED) {
                                     height: 100%;
                                     display: inline-block;
                                 `;
+
                                     currDiv.style.cssText = containerCSS;
                                     for (var k = 0; k < currDiv.getElementsByTagName("button").length; k++) {
                                         var currButton = currDiv.getElementsByTagName("button")[k];
@@ -133,9 +135,8 @@ module.exports = function (RED) {
                                 }
                                 $scope.updateButtons($scope.value);
 
-                                //Show the element with a nice fade once everything has loaded since this will happen after the page is loaded :(
+                                //Show the element once everything has loaded since this will happen after the page is loaded :(
                                 curr.getElementsByTagName("div")[0].style.display = "block";
-                                setTimeout(function () { curr.getElementsByTagName("div")[0].style.opacity = 1; }, 100);
 
                                 //Send a request to get states
                                 $scope.send([undefined, { payload: $scope.value }]);
